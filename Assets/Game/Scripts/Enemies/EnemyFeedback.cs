@@ -21,6 +21,13 @@ namespace Game.Enemies
         [SerializeField] private float _knockbackDuration = 0.5f;
         [SerializeField] private float _shrinkDuration = 0.25f;
 
+        [Header("Vanish")]
+        [SerializeField] private ParticleSystem _vanishPuff;
+        [SerializeField] private float _vanishSwellScale = 1.25f;
+        [SerializeField] private float _vanishSwellDuration = 0.1f;
+        [SerializeField] private float _vanishShrinkDuration = 0.15f;
+        [SerializeField, Tooltip("Keeps the object alive until the puff particles fade out")] private float _vanishTail = 0.5f;
+
         public void PlayHit()
         {
             _damageFlash.Play();
@@ -44,6 +51,20 @@ namespace Game.Enemies
             return sequence.ToUniTask(TweenCancelBehaviour.Kill, cancellationToken);
         }
 
+        public UniTask PlayVanishAsync(CancellationToken cancellationToken)
+        {
+            _damageFlash.Play();
+            _model.DOKill(complete: true);
+
+            Sequence sequence = DOTween.Sequence()
+                .Append(_model.DOScale(Vector3.one * _vanishSwellScale, _vanishSwellDuration).SetEase(Ease.OutQuad))
+                .AppendCallback(_vanishPuff.Play)
+                .Append(_model.DOScale(Vector3.zero, _vanishShrinkDuration).SetEase(Ease.InBack))
+                .AppendInterval(_vanishTail);
+
+            return sequence.ToUniTask(TweenCancelBehaviour.Kill, cancellationToken);
+        }
+
         public void ResetVisual()
         {
             transform.DOKill();
@@ -53,6 +74,7 @@ namespace Game.Enemies
             _model.localRotation = Quaternion.identity;
             _model.localScale = Vector3.one;
             _damageFlash.ResetFlash();
+            _vanishPuff.Stop(withChildren: true, ParticleSystemStopBehavior.StopEmittingAndClear);
         }
     }
 }

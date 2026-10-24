@@ -1,8 +1,9 @@
+using Game.Level;
 using UnityEngine;
 
 namespace Game.Weapons
 {
-    public class Turret : MonoBehaviour
+    public class Turret : MonoBehaviour, IResettable
     {
         [SerializeField] private TurretAim _aim;
         [SerializeField] private TurretGun _gun;
@@ -17,7 +18,7 @@ namespace Game.Weapons
         public void Deactivate() =>
             SetActive(false);
 
-        public void ResetAim() =>
+        public void ResetState() =>
             _aim.ResetAim();
 
         private void SetActive(bool isActive)

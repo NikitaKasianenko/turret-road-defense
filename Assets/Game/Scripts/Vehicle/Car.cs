@@ -1,11 +1,13 @@
 using Game.Combat;
 using Game.Configs;
+using Game.Enemies;
+using Game.Level;
 using UnityEngine;
 using Zenject;
 
 namespace Game.Vehicle
 {
-    public class Car : MonoBehaviour, IDamageable
+    public class Car : MonoBehaviour, IEnemyTarget, IResettable
     {
         [SerializeField] private CarMovement _movement;
         [SerializeField] private CarFeedback _feedback;

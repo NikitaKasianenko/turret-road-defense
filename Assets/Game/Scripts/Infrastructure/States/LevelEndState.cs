@@ -1,10 +1,10 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Game.Enemies;
 using Game.Infrastructure.StateMachine;
 using Game.Input;
 using Game.Level;
+using Game.Scoring;
 using Game.UI;
 
 namespace Game.Infrastructure.States
@@ -14,23 +14,23 @@ namespace Game.Infrastructure.States
         private static readonly TimeSpan RestartInputDelay = TimeSpan.FromSeconds(0.6f);
 
         private readonly GameStateMachine _stateMachine;
-        private readonly EnemySpawner _enemySpawner;
+        private readonly ScoreService _score;
         private readonly GameHud _hud;
         private readonly IInputService _input;
 
         private CancellationTokenSource _cancellation;
 
-        public LevelEndState(GameStateMachine stateMachine, EnemySpawner enemySpawner, GameHud hud, IInputService input)
+        public LevelEndState(GameStateMachine stateMachine, ScoreService score, GameHud hud, IInputService input)
         {
             _stateMachine = stateMachine;
-            _enemySpawner = enemySpawner;
+            _score = score;
             _hud = hud;
             _input = input;
         }
 
         public void Enter(LevelResult result)
         {
-            _hud.ShowResult(result, _enemySpawner.KilledCount);
+            _hud.ShowResult(result, _score.Kills, _score.Score);
 
             _cancellation = new CancellationTokenSource();
             WaitForRestartAsync(_cancellation.Token).Forget();
@@ -45,7 +45,7 @@ namespace Game.Infrastructure.States
 
         private async UniTaskVoid WaitForRestartAsync(CancellationToken cancellationToken)
         {
-            await UniTask.Delay(RestartInputDelay, cancellationToken: cancellationToken);
+            await UniTask.Delay(RestartInputDelay, ignoreTimeScale: true, cancellationToken: cancellationToken);
             await _input.WaitForTapAsync(cancellationToken);
             _stateMachine.Enter<LevelStartState>();
         }

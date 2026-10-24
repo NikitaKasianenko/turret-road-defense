@@ -5,6 +5,8 @@ using Game.Infrastructure.StateMachine;
 using Game.Infrastructure.States;
 using Game.Input;
 using Game.Level;
+using Game.PowerUps;
+using Game.Scoring;
 using Game.UI;
 using Game.Vehicle;
 using Game.Weapons;
@@ -15,8 +17,10 @@ namespace Game.Infrastructure.Installers
 {
     public class GameInstaller : MonoInstaller
     {
-        private const int BulletPoolSize = 32;
+        private const int BulletPoolSize = 48;
         private const int EnemyPoolSize = 32;
+        private const int FloatingTextPoolSize = 8;
+        private const int PowerUpOrbPoolSize = 4;
 
         [Header("Scene")]
         [SerializeField] private Camera _camera;
@@ -31,6 +35,8 @@ namespace Game.Infrastructure.Installers
         [Header("Prefabs")]
         [SerializeField] private Bullet _bulletPrefab;
         [SerializeField] private Enemy _enemyPrefab;
+        [SerializeField] private FloatingText _floatingTextPrefab;
+        [SerializeField] private PowerUpOrb _powerUpOrbPrefab;
 
         public override void InstallBindings()
         {
@@ -55,11 +61,25 @@ namespace Game.Infrastructure.Installers
         private void BindServices()
         {
             Container.Bind<IInputService>().To<PointerInputService>().AsSingle();
+            Container.Bind<LevelSession>().AsSingle();
+
             Container.BindInterfacesAndSelfTo<EnemySpawner>().AsSingle();
+            Container.BindInterfacesAndSelfTo<ScoreService>().AsSingle();
+            Container.BindInterfacesAndSelfTo<PowerUpService>().AsSingle();
+            Container.BindInterfacesTo<PowerUpDropper>().AsSingle();
+
+            Container.BindInterfacesAndSelfTo<TurretHeat>().AsSingle();
+
+            Container.BindInterfacesTo<TimeEffects>().AsSingle();
+            Container.BindInterfacesTo<FloatingTextSpawner>().AsSingle();
         }
 
-        private void BindSceneObjects() =>
-            Container.BindInstances(_camera, _car, _turret, _levelBuilder, _finishLine, _cameraSwitcher, _hud, _impactEffect);
+        private void BindSceneObjects()
+        {
+            Container.BindInterfacesAndSelfTo<Car>().FromInstance(_car);
+            Container.BindInterfacesAndSelfTo<Turret>().FromInstance(_turret);
+            Container.BindInstances(_camera, _levelBuilder, _finishLine, _cameraSwitcher, _hud, _impactEffect);
+        }
 
         private void BindPools()
         {
@@ -72,6 +92,16 @@ namespace Game.Infrastructure.Installers
                 .WithInitialSize(EnemyPoolSize)
                 .FromComponentInNewPrefab(_enemyPrefab)
                 .UnderTransformGroup("Enemies");
+
+            Container.BindMemoryPool<FloatingText, FloatingText.Pool>()
+                .WithInitialSize(FloatingTextPoolSize)
+                .FromComponentInNewPrefab(_floatingTextPrefab)
+                .UnderTransformGroup("FloatingTexts");
+
+            Container.BindMemoryPool<PowerUpOrb, PowerUpOrb.Pool>()
+                .WithInitialSize(PowerUpOrbPoolSize)
+                .FromComponentInNewPrefab(_powerUpOrbPrefab)
+                .UnderTransformGroup("PowerUpOrbs");
         }
     }
 }

@@ -3,9 +3,11 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using Game.Combat;
 using Game.Configs;
-using Game.Vehicle;
+using Game.Effects;
+using Game.Level;
 using UnityEngine;
 using Zenject;
+using Random = UnityEngine.Random;
 
 namespace Game.Enemies
 {
@@ -14,29 +16,38 @@ namespace Game.Enemies
         private enum State
         {
             Idle,
+            Wander,
             Chase,
-            Dead
+            Finished
         }
 
+        [SerializeField] private EnemyMovement _movement;
         [SerializeField] private EnemyAnimator _animator;
         [SerializeField] private EnemyFeedback _feedback;
+        [SerializeField] private RendererTint _tint;
         [SerializeField] private Collider _collider;
 
         private EnemyConfig _config;
-        private Car _car;
+        private IEnemyTarget _target;
+        private LevelSession _session;
         private Health _health;
 
         private State _state;
-        private float _attackCooldown;
+        private float _stateTimeLeft;
+        private Vector3 _spawnPosition;
+        private Vector3 _wanderDirection;
 
-        public event Action<Enemy> Died;
+        public event Action<Enemy> Killed;
+        public event Action<Enemy> Struck;
+
+        public EnemyType Type { get; private set; }
 
         [Inject]
-        public void Construct(EnemyConfig config, Car car)
+        public void Construct(EnemyConfig config, IEnemyTarget target, LevelSession session)
         {
             _config = config;
-            _car = car;
-            _health = new Health(config.MaxHealth);
+            _target = target;
+            _session = session;
         }
 
         private void Update()
@@ -46,6 +57,9 @@ namespace Game.Enemies
                 case State.Idle:
                     UpdateIdle();
                     break;
+                case State.Wander:
+                    UpdateWander();
+                    break;
                 case State.Chase:
                     UpdateChase();
                     break;
@@ -54,7 +68,7 @@ namespace Game.Enemies
 
         public void TakeDamage(float damage)
         {
-            if (_state == State.Dead)
+            if (_state == State.Finished || !_session.IsRunning)
                 return;
 
             _health.TakeDamage(damage);
@@ -66,78 +80,124 @@ namespace Game.Enemies
         }
 
         public UniTask PlayDeathAsync(CancellationToken cancellationToken) =>
-            _feedback.PlayDeathAsync(FlatDirectionFrom(_car.Position), cancellationToken);
+            _feedback.PlayDeathAsync(FlatDirectionFrom(_target.Position), cancellationToken);
 
-        private void Respawn(Vector3 position, Quaternion rotation)
+        public UniTask PlayVanishAsync(CancellationToken cancellationToken) =>
+            _feedback.PlayVanishAsync(cancellationToken);
+
+        private void Respawn(Vector3 position, Quaternion rotation, EnemyType type)
         {
-            transform.SetPositionAndRotation(position, rotation);
+            Type = type;
+            _health = new Health(type.MaxHealth);
+            _movement.Setup(type.RunSpeed);
 
-            _health.Restore();
-            _state = State.Idle;
+            transform.SetPositionAndRotation(position, rotation);
+            transform.localScale = Vector3.one * type.Scale;
+            _spawnPosition = position;
             _collider.enabled = true;
+            EnterIdle();
 
             _feedback.ResetVisual();
+            _tint.Apply(type.Tint);
             _animator.ResetState();
+        }
+
+        private void EnterIdle()
+        {
+            _state = State.Idle;
+            _stateTimeLeft = RandomInRange(_config.IdleDurationRange);
+        }
+
+        private void EnterWander()
+        {
+            _state = State.Wander;
+            _stateTimeLeft = RandomInRange(_config.WanderDurationRange);
+
+            Vector3 toSpawn = _spawnPosition - transform.position;
+            toSpawn.y = 0f;
+            Vector2 random = Random.insideUnitCircle.normalized;
+
+            _wanderDirection = toSpawn.magnitude > _config.WanderRadius
+                ? toSpawn.normalized
+                : new Vector3(random.x, 0f, random.y);
         }
 
         private void UpdateIdle()
         {
-            _animator.SetSpeed(0f);
+            _movement.Stop();
 
-            if (_car.IsTargetable && FlatDistance(_car.Position) <= _config.AggroDistance)
-                StartChase();
+            if (TryStartChase() || !IsStateTimeOver())
+                return;
+
+            if (Random.value < _config.WanderChance)
+                EnterWander();
+            else
+                EnterIdle();
         }
 
-        private void StartChase()
+        private void UpdateWander()
         {
+            if (TryStartChase())
+                return;
+
+            _movement.Walk(_wanderDirection);
+
+            if (IsStateTimeOver())
+                EnterIdle();
+        }
+
+        private bool TryStartChase()
+        {
+            if (!_target.IsTargetable || FlatDistance(_target.Position) > _config.AggroDistance)
+                return false;
+
             _state = State.Chase;
-            _attackCooldown = _config.AttackInterval * 0.5f;
+            return true;
         }
 
         private void UpdateChase()
         {
-            if (!_car.IsTargetable)
+            if (!_target.IsTargetable)
             {
-                _state = State.Idle;
+                EnterIdle();
                 return;
             }
 
-            Vector3 targetPoint = _car.ClosestPoint(transform.position);
-            Vector3 toTarget = targetPoint - transform.position;
+            Vector3 toTarget = _target.ClosestPoint(transform.position) - transform.position;
             toTarget.y = 0f;
             float distance = toTarget.magnitude;
 
-            float maxStep = _config.RunSpeed * Time.deltaTime;
-            float moveDistance = Mathf.Min(maxStep, Mathf.Max(distance - _config.AttackRange, 0f));
-            Vector3 direction = distance > Mathf.Epsilon ? toTarget / distance : transform.forward;
-
-            transform.position += direction * moveDistance;
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(direction),
-                _config.TurnSpeed * Time.deltaTime);
-
-            _animator.SetSpeed(maxStep > 0f ? moveDistance / maxStep : 0f);
-
             if (distance <= _config.AttackRange)
-                TickAttack();
+                Strike();
+            else
+                _movement.Run(toTarget / distance);
         }
 
-        private void TickAttack()
+        private void Strike()
         {
-            _attackCooldown -= Time.deltaTime;
-            if (_attackCooldown > 0f)
-                return;
-
-            _attackCooldown = _config.AttackInterval;
+            Finish();
             _animator.PlayAttack();
-            _car.TakeDamage(_config.AttackDamage);
+            _target.TakeDamage(Type.AttackDamage);
+            Struck?.Invoke(this);
         }
 
         private void Die()
         {
-            _state = State.Dead;
-            _collider.enabled = false;
+            Finish();
             _animator.PlayDeath();
-            Died?.Invoke(this);
+            Killed?.Invoke(this);
+        }
+
+        private void Finish()
+        {
+            _state = State.Finished;
+            _collider.enabled = false;
+        }
+
+        private bool IsStateTimeOver()
+        {
+            _stateTimeLeft -= Time.deltaTime;
+            return _stateTimeLeft <= 0f;
         }
 
         private float FlatDistance(Vector3 point)
@@ -154,10 +214,13 @@ namespace Game.Enemies
             return direction.normalized;
         }
 
-        public class Pool : MonoMemoryPool<Vector3, Quaternion, Enemy>
+        private static float RandomInRange(Vector2 range) =>
+            Random.Range(range.x, range.y);
+
+        public class Pool : MonoMemoryPool<Vector3, Quaternion, EnemyType, Enemy>
         {
-            protected override void Reinitialize(Vector3 position, Quaternion rotation, Enemy enemy) =>
-                enemy.Respawn(position, rotation);
+            protected override void Reinitialize(Vector3 position, Quaternion rotation, EnemyType type, Enemy enemy) =>
+                enemy.Respawn(position, rotation, type);
         }
     }
 }

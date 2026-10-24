@@ -2,6 +2,7 @@ using DG.Tweening;
 using Game.Level;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Game.UI
 {
@@ -10,7 +11,7 @@ namespace Game.UI
         [SerializeField] private CanvasGroup _startScreen;
         [SerializeField] private CanvasGroup _resultScreen;
         [SerializeField] private TMP_Text _resultTitle;
-        [SerializeField] private TMP_Text _resultKills;
+        [SerializeField, FormerlySerializedAs("_resultKills")] private TMP_Text _resultStats;
 
         [Header("Result")]
         [SerializeField] private string _winText = "You win";
@@ -34,12 +35,12 @@ namespace Game.UI
         public void HideStartScreen() =>
             Fade(_startScreen, isVisible: false);
 
-        public void ShowResult(LevelResult result, int killedCount)
+        public void ShowResult(LevelResult result, int kills, int score)
         {
             bool isWin = result == LevelResult.Win;
             _resultTitle.text = isWin ? _winText : _loseText;
             _resultTitle.color = isWin ? _winColor : _loseColor;
-            _resultKills.text = $"Kills: {killedCount}";
+            _resultStats.text = $"Kills: {kills}\nScore: {score}";
 
             Fade(_resultScreen, isVisible: true);
 

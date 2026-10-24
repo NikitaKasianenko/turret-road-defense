@@ -14,6 +14,7 @@ namespace Game.Configs
 
         [field: Header("Enemies")]
         [field: SerializeField, Min(0)] public int EnemyCount { get; private set; } = 30;
+        [field: SerializeField, Tooltip("Each spawned enemy picks a type by weight")] public EnemySpawnWeight[] EnemyTypes { get; private set; }
         [field: SerializeField, Min(0f)] public float SpawnStartDistance { get; private set; } = 35f;
         [field: SerializeField, Min(0f)] public float SpawnEndOffset { get; private set; } = 15f;
         [field: SerializeField, Min(0f)] public float SpawnHalfWidth { get; private set; } = 8f;

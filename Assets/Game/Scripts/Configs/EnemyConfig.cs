@@ -6,17 +6,21 @@ namespace Game.Configs
     [Serializable]
     public class EnemyConfig
     {
-        [field: SerializeField, Min(1f)] public float MaxHealth { get; private set; } = 30f;
+        [field: Header("Idle")]
+        [field: SerializeField, Range(0f, 1f), Tooltip("Chance to wander instead of standing after each pause")]
+        public float WanderChance { get; private set; } = 0.6f;
+        [field: SerializeField, Tooltip("Seconds, x = min, y = max")] public Vector2 IdleDurationRange { get; private set; } = new(1f, 3f);
+        [field: SerializeField, Tooltip("Seconds, x = min, y = max")] public Vector2 WanderDurationRange { get; private set; } = new(1.5f, 3f);
+        [field: SerializeField, Min(0f)] public float WalkSpeed { get; private set; } = 1.5f;
+        [field: SerializeField, Min(0f), Tooltip("Wandering never takes an enemy further than this from its spawn point")]
+        public float WanderRadius { get; private set; } = 3f;
 
-        [field: Header("Movement")]
+        [field: Header("Chase")]
         [field: SerializeField, Min(0f)] public float AggroDistance { get; private set; } = 28f;
-        [field: SerializeField, Min(0f), Tooltip("Keep below car speed: enemies the car has passed fall behind instead of attacking from the turret's blind spot")]
-        public float RunSpeed { get; private set; } = 5.5f;
         [field: SerializeField, Min(0f)] public float TurnSpeed { get; private set; } = 720f;
 
         [field: Header("Attack")]
-        [field: SerializeField, Min(0f)] public float AttackRange { get; private set; } = 0.6f;
-        [field: SerializeField, Min(0f)] public float AttackDamage { get; private set; } = 12f;
-        [field: SerializeField, Min(0.1f)] public float AttackInterval { get; private set; } = 1f;
+        [field: SerializeField, Min(0f), Tooltip("Distance to the car body at which the enemy strikes once and vanishes")]
+        public float AttackRange { get; private set; } = 0.6f;
     }
 }

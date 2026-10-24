@@ -9,15 +9,17 @@ namespace Game.Infrastructure.States
     public class GameplayState : IState
     {
         private readonly GameStateMachine _stateMachine;
+        private readonly LevelSession _session;
         private readonly Car _car;
         private readonly Turret _turret;
         private readonly FinishLine _finishLine;
         private readonly CameraSwitcher _cameraSwitcher;
 
-        public GameplayState(GameStateMachine stateMachine, Car car, Turret turret, FinishLine finishLine,
-            CameraSwitcher cameraSwitcher)
+        public GameplayState(GameStateMachine stateMachine, LevelSession session, Car car, Turret turret,
+            FinishLine finishLine, CameraSwitcher cameraSwitcher)
         {
             _stateMachine = stateMachine;
+            _session = session;
             _car = car;
             _turret = turret;
             _finishLine = finishLine;
@@ -32,6 +34,7 @@ namespace Game.Infrastructure.States
             _cameraSwitcher.ShowGameplay();
             _car.StartDriving();
             _turret.Activate();
+            _session.Start();
         }
 
         public void Exit()
@@ -39,6 +42,7 @@ namespace Game.Infrastructure.States
             _car.Health.Died -= OnCarDied;
             _finishLine.Reached -= OnFinishReached;
 
+            _session.End();
             _turret.Deactivate();
             _car.Stop();
         }

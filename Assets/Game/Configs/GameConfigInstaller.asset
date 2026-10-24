@@ -20,25 +20,51 @@ MonoBehaviour:
   _turret:
     <MaxYawAngle>k__BackingField: 75
     <AimSmoothTime>k__BackingField: 0.06
+    <DefaultShotPattern>k__BackingField: {fileID: 11400000, guid: 4216fde09d02f3d46a63ed69972b5ece, type: 2}
     <FireRate>k__BackingField: 7
     <RecoilDistance>k__BackingField: 0.12
+    <HeatPerShot>k__BackingField: 0.022
+    <CoolingRate>k__BackingField: 0.45
+    <OverheatRecoverLevel>k__BackingField: 0.35
     <BulletDamage>k__BackingField: 10
     <BulletSpeed>k__BackingField: 45
     <BulletLifetime>k__BackingField: 1.2
     <BulletRadius>k__BackingField: 0.25
   _enemy:
-    <MaxHealth>k__BackingField: 30
+    <WanderChance>k__BackingField: 0.6
+    <IdleDurationRange>k__BackingField: {x: 1, y: 3}
+    <WanderDurationRange>k__BackingField: {x: 1.5, y: 3}
+    <WalkSpeed>k__BackingField: 1.5
+    <WanderRadius>k__BackingField: 3
     <AggroDistance>k__BackingField: 28
-    <RunSpeed>k__BackingField: 5.5
     <TurnSpeed>k__BackingField: 720
     <AttackRange>k__BackingField: 0.6
-    <AttackDamage>k__BackingField: 12
-    <AttackInterval>k__BackingField: 1
   _level:
     <Length>k__BackingField: 300
     <GroundTileLength>k__BackingField: 75
     <GroundPadding>k__BackingField: 75
     <EnemyCount>k__BackingField: 30
+    <EnemyTypes>k__BackingField:
+    - <Type>k__BackingField: {fileID: 11400000, guid: 65425f710daa176419e135c1fe795f23, type: 2}
+      <Weight>k__BackingField: 6
+    - <Type>k__BackingField: {fileID: 11400000, guid: f5b3b9b29194ec742a1b78f00ac309cf, type: 2}
+      <Weight>k__BackingField: 3
+    - <Type>k__BackingField: {fileID: 11400000, guid: 1e7d4f97860bfb7448c3f8c5a7c02e33, type: 2}
+      <Weight>k__BackingField: 1
     <SpawnStartDistance>k__BackingField: 35
     <SpawnEndOffset>k__BackingField: 15
     <SpawnHalfWidth>k__BackingField: 8
+  _score:
+    <ComboWindow>k__BackingField: 2.5
+    <KillsPerMultiplierStep>k__BackingField: 3
+    <MaxMultiplier>k__BackingField: 4
+  _powerUps:
+    <DropChance>k__BackingField: 0.15
+    <PowerUps>k__BackingField:
+    - {fileID: 11400000, guid: 796c61921a2aeba45b54ecc8dced0b54, type: 2}
+    - {fileID: 11400000, guid: 9845258852213d44b9e35011ec26f586, type: 2}
+  _feel:
+    <HitStopDuration>k__BackingField: 0.045
+    <HitStopTimeScale>k__BackingField: 0.05
+    <SlowMotionTimeScale>k__BackingField: 0.25
+    <SlowMotionDuration>k__BackingField: 1.2

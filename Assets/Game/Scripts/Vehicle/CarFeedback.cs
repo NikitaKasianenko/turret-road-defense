@@ -16,6 +16,7 @@ namespace Game.Vehicle
         [SerializeField] private float _punchDuration = 0.2f;
 
         [Header("Destroy")]
+        [SerializeField] private CarWreck _wreck;
         [SerializeField] private ParticleSystem _explosion;
         [SerializeField] private ParticleSystem _smoke;
         [SerializeField] private float _destroyImpulseForce = 4f;
@@ -38,6 +39,7 @@ namespace Game.Vehicle
             _impulseSource.GenerateImpulseWithForce(_destroyImpulseForce);
             _explosion.Play();
             _smoke.Play();
+            _wreck.Scatter();
 
             _body.DOKill(complete: true);
             _body.DOLocalJump(Vector3.zero, _destroyJumpPower, numJumps: 1, _destroyDuration);
@@ -50,6 +52,7 @@ namespace Game.Vehicle
             _body.localPosition = Vector3.zero;
             _body.localRotation = Quaternion.identity;
             _body.localScale = Vector3.one;
+            _wreck.Restore();
 
             _explosion.Stop(withChildren: true, ParticleSystemStopBehavior.StopEmittingAndClear);
             _smoke.Stop(withChildren: true, ParticleSystemStopBehavior.StopEmittingAndClear);
