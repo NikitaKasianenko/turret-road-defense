@@ -27,6 +27,9 @@ namespace Game.PowerUps
         public float FireRateMultiplier =>
             Active != null ? Active.FireRateMultiplier : 1f;
 
+        public bool IgnoresHeat =>
+            Active != null && Active.IgnoresHeat;
+
         public PowerUpService(TurretConfig turretConfig, LevelSession session)
         {
             _turretConfig = turretConfig;

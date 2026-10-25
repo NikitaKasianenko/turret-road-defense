@@ -89,10 +89,10 @@ namespace Game.Enemies
         {
             Type = type;
             _health = new Health(type.MaxHealth);
-            _movement.Setup(type.RunSpeed);
 
             transform.SetPositionAndRotation(position, rotation);
             transform.localScale = Vector3.one * type.Scale;
+            _movement.Setup(type.RunSpeed);
             _spawnPosition = position;
             _collider.enabled = true;
             EnterIdle();

@@ -34,10 +34,11 @@ MonoBehaviour:
     <WanderChance>k__BackingField: 0.6
     <IdleDurationRange>k__BackingField: {x: 1, y: 3}
     <WanderDurationRange>k__BackingField: {x: 1.5, y: 3}
-    <WalkSpeed>k__BackingField: 1.5
+    <WalkSpeed>k__BackingField: 0.4
     <WanderRadius>k__BackingField: 3
     <AggroDistance>k__BackingField: 28
     <TurnSpeed>k__BackingField: 720
+    <Acceleration>k__BackingField: 8
     <AttackRange>k__BackingField: 0.6
   _level:
     <Length>k__BackingField: 300

@@ -17,3 +17,4 @@ MonoBehaviour:
   <ShotPattern>k__BackingField: {fileID: 11400000, guid: 4216fde09d02f3d46a63ed69972b5ece, type: 2}
   <FireRateMultiplier>k__BackingField: 2
   <Duration>k__BackingField: 6
+  <IgnoresHeat>k__BackingField: 1

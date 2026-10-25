@@ -35,17 +35,19 @@ namespace Game.Weapons
         {
             _cooldown -= Time.deltaTime;
 
-            if (!_input.IsPointerHeld || _heat.IsOverheated)
-            {
-                _heat.Cool(Time.deltaTime);
-                return;
-            }
+            bool ignoresHeat = _powerUps.IgnoresHeat;
+            bool canFire = _input.IsPointerHeld && (ignoresHeat || !_heat.IsOverheated);
 
-            if (_cooldown > 0f)
+            if (!canFire || ignoresHeat)
+                _heat.Cool(Time.deltaTime);
+
+            if (!canFire || _cooldown > 0f)
                 return;
 
             Fire();
-            _heat.AddShot();
+            if (!ignoresHeat)
+                _heat.AddShot();
+
             _cooldown = 1f / (_config.FireRate * _powerUps.FireRateMultiplier);
         }
 
