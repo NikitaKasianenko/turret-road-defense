@@ -19,9 +19,11 @@ namespace Game.Enemies
         [SerializeField] private float _knockbackDistance = 2.5f;
         [SerializeField] private float _knockbackHeight = 1f;
         [SerializeField] private float _knockbackDuration = 0.5f;
+        [SerializeField, Tooltip("Lets the death clip play out before the body shrinks")] private float _lyingDuration = 1f;
         [SerializeField] private float _shrinkDuration = 0.25f;
 
         [Header("Vanish")]
+        [SerializeField, Tooltip("Lets the attack clip land before the enemy disappears")] private float _vanishDelay = 0.35f;
         [SerializeField] private ParticleSystem _vanishPuff;
         [SerializeField] private float _vanishSwellScale = 1.25f;
         [SerializeField] private float _vanishSwellDuration = 0.1f;
@@ -44,8 +46,8 @@ namespace Game.Enemies
             Vector3 landingPoint = transform.position + knockbackDirection * _knockbackDistance;
 
             Sequence sequence = DOTween.Sequence()
-                .Join(transform.DOJump(landingPoint, _knockbackHeight, numJumps: 1, _knockbackDuration))
-                .Join(_model.DOLocalRotate(new Vector3(-90f, 0f, 0f), _knockbackDuration).SetEase(Ease.OutQuad))
+                .Append(transform.DOJump(landingPoint, _knockbackHeight, numJumps: 1, _knockbackDuration))
+                .AppendInterval(_lyingDuration)
                 .Append(_model.DOScale(Vector3.zero, _shrinkDuration).SetEase(Ease.InBack));
 
             return sequence.ToUniTask(TweenCancelBehaviour.Kill, cancellationToken);
@@ -57,6 +59,7 @@ namespace Game.Enemies
             _model.DOKill(complete: true);
 
             Sequence sequence = DOTween.Sequence()
+                .AppendInterval(_vanishDelay)
                 .Append(_model.DOScale(Vector3.one * _vanishSwellScale, _vanishSwellDuration).SetEase(Ease.OutQuad))
                 .AppendCallback(_vanishPuff.Play)
                 .Append(_model.DOScale(Vector3.zero, _vanishShrinkDuration).SetEase(Ease.InBack))

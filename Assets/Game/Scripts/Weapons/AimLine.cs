@@ -6,19 +6,28 @@ namespace Game.Weapons
     public class AimLine : MonoBehaviour
     {
         [SerializeField] private TurretAim _aim;
+        [SerializeField] private Transform _muzzle;
         [SerializeField] private LineRenderer _line;
-        [SerializeField, Min(0f)] private float _startOffset = 2.5f;
         [SerializeField, Min(0f)] private float _length = 22f;
-        [SerializeField] private float _height = 0.08f;
+
+        private float _barrelLength;
+
+        private void Awake()
+        {
+            Vector3 barrel = _muzzle.position - _aim.transform.position;
+            barrel.y = 0f;
+            _barrelLength = barrel.magnitude;
+        }
 
         private void LateUpdate()
         {
             Vector3 direction = _aim.TargetDirection;
             Vector3 origin = _aim.transform.position;
-            origin.y = _height;
+            origin.y = _muzzle.position.y;
 
-            _line.SetPosition(0, origin + direction * _startOffset);
-            _line.SetPosition(1, origin + direction * (_startOffset + _length));
+            Vector3 start = origin + direction * _barrelLength;
+            _line.SetPosition(0, start);
+            _line.SetPosition(1, start + direction * _length);
         }
     }
 }
