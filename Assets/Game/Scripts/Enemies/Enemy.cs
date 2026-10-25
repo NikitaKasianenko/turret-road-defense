@@ -5,6 +5,7 @@ using Game.Combat;
 using Game.Configs;
 using Game.Effects;
 using Game.Level;
+using Game.UI;
 using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
@@ -25,6 +26,7 @@ namespace Game.Enemies
         [SerializeField] private EnemyAnimator _animator;
         [SerializeField] private EnemyFeedback _feedback;
         [SerializeField] private RendererTint _tint;
+        [SerializeField] private HealthBar _healthBar;
         [SerializeField] private Collider _collider;
 
         private EnemyConfig _config;
@@ -89,6 +91,7 @@ namespace Game.Enemies
         {
             Type = type;
             _health = new Health(type.MaxHealth);
+            _healthBar.Bind(_health);
 
             transform.SetPositionAndRotation(position, rotation);
             transform.localScale = Vector3.one * type.Scale;

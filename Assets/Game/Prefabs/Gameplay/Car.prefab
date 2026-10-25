@@ -10102,6 +10102,7 @@ MonoBehaviour:
   _movement: {fileID: 5647754078338178409}
   _feedback: {fileID: 5094831846337145607}
   _body: {fileID: 4782955135855990080}
+  _healthBar: {fileID: 5182318934289706717}
 --- !u!114 &6994551672893644647
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10645,6 +10646,7 @@ GameObject:
   - component: {fileID: 6727077780072439861}
   - component: {fileID: 91540704961674650}
   - component: {fileID: 5182318934289706717}
+  - component: {fileID: 5047301148401893738}
   m_Layer: 0
   m_Name: HealthBarCanvas
   m_TagString: Untagged
@@ -10723,11 +10725,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e122e5c7335b6c44b5a3d389be24fb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.Runtime::Game.UI.HealthBar
+  _group: {fileID: 5047301148401893738}
   _fill: {fileID: 2474372040642164801}
   _trail: {fileID: 5062444479617302922}
+  _hideUntilDamaged: 0
+  _fadeDuration: 0.15
   _fillDuration: 0.15
   _trailDelay: 0.3
   _trailDuration: 0.4
+--- !u!225 &5047301148401893738
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6998251277823736078}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &7160769833388378869
 GameObject:
   m_ObjectHideFlags: 0

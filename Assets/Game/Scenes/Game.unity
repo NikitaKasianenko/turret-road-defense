@@ -1291,6 +1291,14 @@ PrefabInstance:
       propertyPath: m_TextStyleHashCode
       value: -1183493901
       objectReference: {fileID: 0}
+    - target: {fileID: 2076336313304376348, guid: a18ca38874d065d44b4ef6dfc154fc0e, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4281568511
+      objectReference: {fileID: 0}
+    - target: {fileID: 2076336313304376348, guid: a18ca38874d065d44b4ef6dfc154fc0e, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
     - target: {fileID: 2847049613061982813, guid: a18ca38874d065d44b4ef6dfc154fc0e, type: 3}
       propertyPath: m_AdditionalShaderChannelsFlag
       value: 25
@@ -1316,6 +1324,10 @@ PrefabInstance:
       value: -1183493901
       objectReference: {fileID: 0}
     - target: {fileID: 6252814676960437343, guid: a18ca38874d065d44b4ef6dfc154fc0e, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
+    - target: {fileID: 6639906414533592341, guid: a18ca38874d065d44b4ef6dfc154fc0e, type: 3}
       propertyPath: m_TextStyleHashCode
       value: -1183493901
       objectReference: {fileID: 0}

@@ -2,6 +2,7 @@ using Game.Combat;
 using Game.Configs;
 using Game.Enemies;
 using Game.Level;
+using Game.UI;
 using UnityEngine;
 using Zenject;
 
@@ -12,6 +13,7 @@ namespace Game.Vehicle
         [SerializeField] private CarMovement _movement;
         [SerializeField] private CarFeedback _feedback;
         [SerializeField] private Collider _body;
+        [SerializeField] private HealthBar _healthBar;
 
         private Health _health;
         private Vector3 _startPosition;
@@ -22,8 +24,11 @@ namespace Game.Vehicle
         public bool IsTargetable => _isActive && !_health.IsDead;
 
         [Inject]
-        public void Construct(CarConfig config) =>
+        public void Construct(CarConfig config)
+        {
             _health = new Health(config.MaxHealth);
+            _healthBar.Bind(_health);
+        }
 
         private void Awake() =>
             _startPosition = transform.position;

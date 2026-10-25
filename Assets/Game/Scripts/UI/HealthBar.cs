@@ -1,38 +1,49 @@
 using DG.Tweening;
 using Game.Combat;
-using Game.Vehicle;
 using UnityEngine;
 using UnityEngine.UI;
-using Zenject;
 
 namespace Game.UI
 {
     public class HealthBar : MonoBehaviour
     {
+        [SerializeField] private CanvasGroup _group;
         [SerializeField] private Image _fill;
         [SerializeField] private Image _trail;
+        [SerializeField, Tooltip("Stays hidden until the first damage, hides again at zero")] private bool _hideUntilDamaged;
+        [SerializeField, Min(0f)] private float _fadeDuration = 0.15f;
         [SerializeField, Min(0f)] private float _fillDuration = 0.15f;
         [SerializeField, Min(0f)] private float _trailDelay = 0.3f;
         [SerializeField, Min(0f)] private float _trailDuration = 0.4f;
 
         private IReadOnlyHealth _health;
 
-        [Inject]
-        public void Construct(Car car) =>
-            _health = car.Health;
-
-        private void Start()
+        public void Bind(IReadOnlyHealth health)
         {
+            Unbind();
+            _health = health;
             _health.Changed += OnHealthChanged;
+
             SetInstant(_health.Normalized);
+            _group.DOKill();
+            _group.alpha = _hideUntilDamaged ? 0f : 1f;
         }
 
         private void OnDestroy() =>
-            _health.Changed -= OnHealthChanged;
+            Unbind();
+
+        private void Unbind()
+        {
+            if (_health != null)
+                _health.Changed -= OnHealthChanged;
+        }
 
         private void OnHealthChanged()
         {
             float value = _health.Normalized;
+
+            if (_hideUntilDamaged)
+                Fade(isVisible: value > 0f && value < 1f);
 
             if (value >= _fill.fillAmount)
             {
@@ -45,6 +56,16 @@ namespace Game.UI
 
             _trail.DOKill();
             _trail.DOFillAmount(value, _trailDuration).SetDelay(_trailDelay);
+        }
+
+        private void Fade(bool isVisible)
+        {
+            float alpha = isVisible ? 1f : 0f;
+            if (Mathf.Approximately(_group.alpha, alpha))
+                return;
+
+            _group.DOKill();
+            _group.DOFade(alpha, _fadeDuration);
         }
 
         private void SetInstant(float value)

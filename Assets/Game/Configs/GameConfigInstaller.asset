@@ -43,7 +43,7 @@ MonoBehaviour:
   _level:
     <Length>k__BackingField: 300
     <GroundTileLength>k__BackingField: 75
-    <GroundPadding>k__BackingField: 75
+    <GroundPadding>k__BackingField: 165
     <EnemyCount>k__BackingField: 30
     <EnemyTypes>k__BackingField:
     - <Type>k__BackingField: {fileID: 11400000, guid: 65425f710daa176419e135c1fe795f23, type: 2}

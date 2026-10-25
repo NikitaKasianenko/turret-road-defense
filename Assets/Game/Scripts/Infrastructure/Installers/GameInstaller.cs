@@ -3,7 +3,6 @@ using Game.Effects;
 using Game.Enemies;
 using Game.Infrastructure.StateMachine;
 using Game.Infrastructure.States;
-using Game.Input;
 using Game.Level;
 using Game.PowerUps;
 using Game.Scoring;
@@ -60,7 +59,6 @@ namespace Game.Infrastructure.Installers
 
         private void BindServices()
         {
-            Container.Bind<IInputService>().To<PointerInputService>().AsSingle();
             Container.Bind<LevelSession>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<EnemySpawner>().AsSingle();

@@ -10,7 +10,8 @@ namespace Game.Configs
 
         [field: Header("Ground")]
         [field: SerializeField, Min(1f)] public float GroundTileLength { get; private set; } = 75f;
-        [field: SerializeField, Min(0f), Tooltip("Extra ground before start and after finish")] public float GroundPadding { get; private set; } = 75f;
+        [field: SerializeField, Min(0f), Tooltip("Extra ground before start and after finish; keep above the fog end distance so the edge is never visible")]
+        public float GroundPadding { get; private set; } = 165f;
 
         [field: Header("Enemies")]
         [field: SerializeField, Min(0)] public int EnemyCount { get; private set; } = 30;
