@@ -6,21 +6,28 @@ namespace Game.Effects
     {
         private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
 
-        [SerializeField] private Renderer[] _renderers;
+        [SerializeField, Tooltip("Each renderer gets its own material instance, which keeps it SRP Batcher compatible")]
+        private Renderer[] _renderers;
 
-        private MaterialPropertyBlock _propertyBlock;
+        private Material[] _materials;
 
-        private void Awake() =>
-            _propertyBlock = new MaterialPropertyBlock();
+        private void Awake()
+        {
+            _materials = new Material[_renderers.Length];
+            for (int i = 0; i < _renderers.Length; i++)
+                _materials[i] = _renderers[i].material;
+        }
+
+        private void OnDestroy()
+        {
+            foreach (Material material in _materials)
+                Destroy(material);
+        }
 
         public void Apply(Color color)
         {
-            foreach (Renderer target in _renderers)
-            {
-                target.GetPropertyBlock(_propertyBlock);
-                _propertyBlock.SetColor(BaseColorId, color);
-                target.SetPropertyBlock(_propertyBlock);
-            }
+            foreach (Material material in _materials)
+                material.SetColor(BaseColorId, color);
         }
     }
 }

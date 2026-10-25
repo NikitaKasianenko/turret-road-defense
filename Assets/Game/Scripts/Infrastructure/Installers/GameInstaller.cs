@@ -62,6 +62,7 @@ namespace Game.Infrastructure.Installers
             Container.Bind<LevelSession>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<EnemySpawner>().AsSingle();
+            Container.BindInterfacesAndSelfTo<EnemyCrowd>().AsSingle();
             Container.BindInterfacesAndSelfTo<ScoreService>().AsSingle();
             Container.BindInterfacesAndSelfTo<PowerUpService>().AsSingle();
             Container.BindInterfacesTo<PowerUpDropper>().AsSingle();
@@ -88,8 +89,7 @@ namespace Game.Infrastructure.Installers
 
             Container.BindMemoryPool<Enemy, Enemy.Pool>()
                 .WithInitialSize(EnemyPoolSize)
-                .FromComponentInNewPrefab(_enemyPrefab)
-                .UnderTransformGroup("Enemies");
+                .FromComponentInNewPrefab(_enemyPrefab);
 
             Container.BindMemoryPool<FloatingText, FloatingText.Pool>()
                 .WithInitialSize(FloatingTextPoolSize)

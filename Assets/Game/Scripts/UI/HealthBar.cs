@@ -10,7 +10,8 @@ namespace Game.UI
         [SerializeField] private CanvasGroup _group;
         [SerializeField] private Image _fill;
         [SerializeField] private Image _trail;
-        [SerializeField, Tooltip("Stays hidden until the first damage, hides again at zero")] private bool _hideUntilDamaged;
+        [SerializeField, Tooltip("Stays hidden until the first damage, hides again at zero; a hidden bar is deactivated so its canvas costs nothing")]
+        private bool _hideUntilDamaged;
         [SerializeField, Min(0f)] private float _fadeDuration = 0.15f;
         [SerializeField, Min(0f)] private float _fillDuration = 0.15f;
         [SerializeField, Min(0f)] private float _trailDelay = 0.3f;
@@ -27,6 +28,7 @@ namespace Game.UI
             SetInstant(_health.Normalized);
             _group.DOKill();
             _group.alpha = _hideUntilDamaged ? 0f : 1f;
+            gameObject.SetActive(!_hideUntilDamaged);
         }
 
         private void OnDestroy() =>
@@ -65,7 +67,11 @@ namespace Game.UI
                 return;
 
             _group.DOKill();
-            _group.DOFade(alpha, _fadeDuration);
+            gameObject.SetActive(true);
+            Tween fade = _group.DOFade(alpha, _fadeDuration);
+
+            if (!isVisible)
+                fade.OnComplete(() => gameObject.SetActive(false));
         }
 
         private void SetInstant(float value)

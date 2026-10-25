@@ -22,7 +22,6 @@ namespace Game.Enemies
             Finished
         }
 
-        [SerializeField] private EnemyMovement _movement;
         [SerializeField] private EnemyAnimator _animator;
         [SerializeField] private EnemyFeedback _feedback;
         [SerializeField] private RendererTint _tint;
@@ -32,6 +31,7 @@ namespace Game.Enemies
         private EnemyConfig _config;
         private IEnemyTarget _target;
         private LevelSession _session;
+        private EnemyCrowd _crowd;
         private Health _health;
 
         private State _state;
@@ -45,25 +45,28 @@ namespace Game.Enemies
         public EnemyType Type { get; private set; }
 
         [Inject]
-        public void Construct(EnemyConfig config, IEnemyTarget target, LevelSession session)
+        public void Construct(EnemyConfig config, IEnemyTarget target, LevelSession session, EnemyCrowd crowd)
         {
             _config = config;
             _target = target;
             _session = session;
+            _crowd = crowd;
         }
 
-        private void Update()
+        public void Think(ref EnemyMotion motion)
         {
+            _animator.SetSpeed(motion.CurrentSpeed);
+
             switch (_state)
             {
                 case State.Idle:
-                    UpdateIdle();
+                    UpdateIdle(ref motion);
                     break;
                 case State.Wander:
-                    UpdateWander();
+                    UpdateWander(ref motion);
                     break;
                 case State.Chase:
-                    UpdateChase();
+                    UpdateChase(ref motion);
                     break;
             }
         }
@@ -95,9 +98,9 @@ namespace Game.Enemies
 
             transform.SetPositionAndRotation(position, rotation);
             transform.localScale = Vector3.one * type.Scale;
-            _movement.Setup(type.RunSpeed);
             _spawnPosition = position;
             _collider.enabled = true;
+            _crowd.Add(this);
             EnterIdle();
 
             _feedback.ResetVisual();
@@ -125,11 +128,11 @@ namespace Game.Enemies
                 : new Vector3(random.x, 0f, random.y);
         }
 
-        private void UpdateIdle()
+        private void UpdateIdle(ref EnemyMotion motion)
         {
-            _movement.Stop();
+            motion.TargetSpeed = 0f;
 
-            if (TryStartChase() || !IsStateTimeOver())
+            if (TryStartChase(motion) || !IsStateTimeOver())
                 return;
 
             if (Random.value < _config.WanderChance)
@@ -138,27 +141,28 @@ namespace Game.Enemies
                 EnterIdle();
         }
 
-        private void UpdateWander()
+        private void UpdateWander(ref EnemyMotion motion)
         {
-            if (TryStartChase())
+            if (TryStartChase(motion))
                 return;
 
-            _movement.Walk(_wanderDirection);
+            motion.Direction = _wanderDirection;
+            motion.TargetSpeed = _config.WalkSpeed;
 
             if (IsStateTimeOver())
                 EnterIdle();
         }
 
-        private bool TryStartChase()
+        private bool TryStartChase(in EnemyMotion motion)
         {
-            if (!_target.IsTargetable || FlatDistance(_target.Position) > _config.AggroDistance)
+            if (!_target.IsTargetable || motion.DistanceToTarget > _config.AggroDistance)
                 return false;
 
             _state = State.Chase;
             return true;
         }
 
-        private void UpdateChase()
+        private void UpdateChase(ref EnemyMotion motion)
         {
             if (!_target.IsTargetable)
             {
@@ -171,9 +175,13 @@ namespace Game.Enemies
             float distance = toTarget.magnitude;
 
             if (distance <= _config.AttackRange)
+            {
                 Strike();
-            else
-                _movement.Run(toTarget / distance);
+                return;
+            }
+
+            motion.Direction = toTarget / distance;
+            motion.TargetSpeed = Type.RunSpeed;
         }
 
         private void Strike()
@@ -195,19 +203,13 @@ namespace Game.Enemies
         {
             _state = State.Finished;
             _collider.enabled = false;
+            _crowd.Remove(this);
         }
 
         private bool IsStateTimeOver()
         {
             _stateTimeLeft -= Time.deltaTime;
             return _stateTimeLeft <= 0f;
-        }
-
-        private float FlatDistance(Vector3 point)
-        {
-            Vector3 offset = point - transform.position;
-            offset.y = 0f;
-            return offset.magnitude;
         }
 
         private Vector3 FlatDirectionFrom(Vector3 point)
@@ -222,6 +224,12 @@ namespace Game.Enemies
 
         public class Pool : MonoMemoryPool<Vector3, Quaternion, EnemyType, Enemy>
         {
+            protected override void OnDespawned(Enemy enemy)
+            {
+                enemy._crowd.Remove(enemy);
+                base.OnDespawned(enemy);
+            }
+
             protected override void Reinitialize(Vector3 position, Quaternion rotation, EnemyType type, Enemy enemy) =>
                 enemy.Respawn(position, rotation, type);
         }

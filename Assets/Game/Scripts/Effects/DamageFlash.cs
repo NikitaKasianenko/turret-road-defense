@@ -34,12 +34,11 @@ namespace Game.Effects
 
         private void Apply(float intensity)
         {
+            _propertyBlock.SetColor(EmissionColorId, _color * intensity);
+            MaterialPropertyBlock block = intensity > 0f ? _propertyBlock : null;
+
             foreach (Renderer target in _renderers)
-            {
-                target.GetPropertyBlock(_propertyBlock);
-                _propertyBlock.SetColor(EmissionColorId, _color * intensity);
-                target.SetPropertyBlock(_propertyBlock);
-            }
+                target.SetPropertyBlock(block);
         }
     }
 }

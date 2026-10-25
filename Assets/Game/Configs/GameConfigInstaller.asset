@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GameConfigInstaller
   m_EditorClassIdentifier: Game.Runtime::Game.Configs.GameConfigInstaller
   _car:
-    <MaxHealth>k__BackingField: 100
+    <MaxHealth>k__BackingField: 1000
     <MaxSpeed>k__BackingField: 8
     <Acceleration>k__BackingField: 4
     <BrakeDeceleration>k__BackingField: 6
@@ -44,7 +44,7 @@ MonoBehaviour:
     <Length>k__BackingField: 300
     <GroundTileLength>k__BackingField: 75
     <GroundPadding>k__BackingField: 165
-    <EnemyCount>k__BackingField: 30
+    <EnemyCount>k__BackingField: 1000
     <EnemyTypes>k__BackingField:
     - <Type>k__BackingField: {fileID: 11400000, guid: 65425f710daa176419e135c1fe795f23, type: 2}
       <Weight>k__BackingField: 6

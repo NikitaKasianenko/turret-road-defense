@@ -5277,7 +5277,6 @@ GameObject:
   - component: {fileID: 4314209918373656592}
   - component: {fileID: 8141609665526820699}
   - component: {fileID: 1133137301195009984}
-  - component: {fileID: 4249428647498853256}
   - component: {fileID: 7171230767653270947}
   m_Layer: 7
   m_Name: Enemy
@@ -5385,10 +5384,6 @@ MonoBehaviour:
   _speedDampTime: 0.1
   _runClipSpeed: 1.5
   _maxLocomotionScale: 2.5
-  _attackStartTime: 0.7
-  _attackImpactTime: 1.05
-  _attackStateSpeed: 1.6
-  _attackBlendDuration: 0.08
 --- !u!114 &8141609665526820699
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5428,25 +5423,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 411cefaf5b54bb649a283ae623a8c739, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.Runtime::Game.Enemies.Enemy
-  _movement: {fileID: 4249428647498853256}
   _animator: {fileID: 4314209918373656592}
   _feedback: {fileID: 8141609665526820699}
   _tint: {fileID: 7171230767653270947}
   _healthBar: {fileID: 5211944378751962537}
   _collider: {fileID: 1019647864766210554}
---- !u!114 &4249428647498853256
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8722042811311084465}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae564ef0bb232d246986aacc8caa78c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.Runtime::Game.Enemies.EnemyMovement
-  _animator: {fileID: 4314209918373656592}
 --- !u!114 &7171230767653270947
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5517,6 +5498,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: c43b3ef3241ecbb4784f2f71ee8c7361, type: 2}
+    - target: {fileID: 5866666021909216657, guid: e2b557f28ac3951438d3cee62cb04313, type: 3}
+      propertyPath: m_CullingMode
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: e2b557f28ac3951438d3cee62cb04313, type: 3}
       propertyPath: m_ApplyRootMotion
       value: 0
