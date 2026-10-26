@@ -65,7 +65,5 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 796c61921a2aeba45b54ecc8dced0b54, type: 2}
     - {fileID: 11400000, guid: 9845258852213d44b9e35011ec26f586, type: 2}
   _feel:
-    <HitStopDuration>k__BackingField: 0.045
-    <HitStopTimeScale>k__BackingField: 0.05
     <SlowMotionTimeScale>k__BackingField: 0.25
     <SlowMotionDuration>k__BackingField: 1.2
