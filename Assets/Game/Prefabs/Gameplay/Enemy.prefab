@@ -5385,10 +5385,6 @@ MonoBehaviour:
   _speedDampTime: 0.1
   _runClipSpeed: 1.5
   _maxLocomotionScale: 2.5
-  _attackStartTime: 0.7
-  _attackImpactTime: 1.05
-  _attackStateSpeed: 1.6
-  _attackBlendDuration: 0.08
 --- !u!114 &8141609665526820699
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5403,14 +5399,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::Game.Enemies.EnemyFeedback
   _model: {fileID: 476238523930273351}
   _damageFlash: {fileID: 8036393811494998636}
+  _hitSound: {fileID: 11400000, guid: 68222d247b09c234b9087ad9730da272, type: 2}
   _hitPunchStrength: 0.15
   _hitPunchDuration: 0.15
+  _deathSound: {fileID: 11400000, guid: ebe2b16734a92114eb36e3f2c43dc5d5, type: 2}
   _knockbackDistance: 2.5
   _knockbackHeight: 1
   _knockbackDuration: 0.5
   _lyingDuration: 1
   _shrinkDuration: 0.25
   _vanishDelay: 0.1
+  _vanishSound: {fileID: 11400000, guid: 86e488c4c808cf545a089a13a4276d65, type: 2}
   _vanishPuff: {fileID: 926886004234704666}
   _vanishSwellScale: 1.25
   _vanishSwellDuration: 0.1

@@ -1,7 +1,9 @@
 using DG.Tweening;
+using Game.Audio;
 using Game.Effects;
 using Unity.Cinemachine;
 using UnityEngine;
+using Zenject;
 
 namespace Game.Vehicle
 {
@@ -12,10 +14,12 @@ namespace Game.Vehicle
         [SerializeField] private Transform _body;
 
         [Header("Hit")]
+        [SerializeField] private SoundEffect _hitSound;
         [SerializeField] private float _punchStrength = 0.06f;
         [SerializeField] private float _punchDuration = 0.2f;
 
         [Header("Destroy")]
+        [SerializeField] private SoundEffect _explosionSound;
         [SerializeField] private CarWreck _wreck;
         [SerializeField] private ParticleSystem _explosion;
         [SerializeField] private ParticleSystem _smoke;
@@ -24,10 +28,17 @@ namespace Game.Vehicle
         [SerializeField] private float _destroyDuration = 0.7f;
         [SerializeField] private Vector3 _destroyTilt = new(-8f, 0f, 18f);
 
+        private IAudioService _audio;
+
+        [Inject]
+        public void Construct(IAudioService audio) =>
+            _audio = audio;
+
         public void PlayHit()
         {
             _damageFlash.Play();
             _impulseSource.GenerateImpulse();
+            _audio.Play(_hitSound);
 
             _body.DOKill(complete: true);
             _body.DOPunchScale(Vector3.one * _punchStrength, _punchDuration, vibrato: 6);
@@ -37,6 +48,7 @@ namespace Game.Vehicle
         {
             _damageFlash.Play();
             _impulseSource.GenerateImpulseWithForce(_destroyImpulseForce);
+            _audio.Play(_explosionSound);
             _explosion.Play();
             _smoke.Play();
             _wreck.Scatter();

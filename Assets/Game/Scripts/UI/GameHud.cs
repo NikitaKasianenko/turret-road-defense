@@ -1,8 +1,10 @@
 using DG.Tweening;
+using Game.Audio;
 using Game.Level;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Zenject;
 
 namespace Game.UI
 {
@@ -18,10 +20,18 @@ namespace Game.UI
         [SerializeField] private string _loseText = "You lose";
         [SerializeField] private Color _winColor = new(0.45f, 0.9f, 0.35f);
         [SerializeField] private Color _loseColor = new(0.95f, 0.3f, 0.25f);
+        [SerializeField] private SoundEffect _winSound;
+        [SerializeField] private SoundEffect _loseSound;
 
         [Header("Animation")]
         [SerializeField, Min(0f)] private float _fadeDuration = 0.25f;
         [SerializeField, Min(0f)] private float _titlePopDuration = 0.4f;
+
+        private IAudioService _audio;
+
+        [Inject]
+        public void Construct(IAudioService audio) =>
+            _audio = audio;
 
         private void Awake()
         {
@@ -41,6 +51,7 @@ namespace Game.UI
             _resultTitle.text = isWin ? _winText : _loseText;
             _resultTitle.color = isWin ? _winColor : _loseColor;
             _resultStats.text = $"Kills: {kills}\nScore: {score}";
+            _audio.Play(isWin ? _winSound : _loseSound);
 
             Fade(_resultScreen, isVisible: true);
 

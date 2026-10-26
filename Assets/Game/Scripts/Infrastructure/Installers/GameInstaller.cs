@@ -1,3 +1,4 @@
+using Game.Audio;
 using Game.CameraLogic;
 using Game.Effects;
 using Game.Enemies;
@@ -60,6 +61,7 @@ namespace Game.Infrastructure.Installers
         private void BindServices()
         {
             Container.Bind<LevelSession>().AsSingle();
+            Container.BindInterfacesTo<AudioService>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<EnemySpawner>().AsSingle();
             Container.BindInterfacesAndSelfTo<ScoreService>().AsSingle();

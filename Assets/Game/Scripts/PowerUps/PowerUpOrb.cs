@@ -1,3 +1,4 @@
+using Game.Audio;
 using Game.Effects;
 using Game.Vehicle;
 using UnityEngine;
@@ -12,9 +13,11 @@ namespace Game.PowerUps
         [SerializeField, Min(0.1f)] private float _flightDuration = 0.7f;
         [SerializeField] private float _arcHeight = 3f;
         [SerializeField] private float _targetHeight = 1.5f;
+        [SerializeField] private SoundEffect _pickupSound;
 
         private Car _car;
         private PowerUpService _powerUps;
+        private IAudioService _audio;
         private Pool _pool;
 
         private PowerUp _powerUp;
@@ -22,10 +25,11 @@ namespace Game.PowerUps
         private float _elapsed;
 
         [Inject]
-        public void Construct(Car car, PowerUpService powerUps)
+        public void Construct(Car car, PowerUpService powerUps, IAudioService audio)
         {
             _car = car;
             _powerUps = powerUps;
+            _audio = audio;
         }
 
         private void Update()
@@ -42,6 +46,7 @@ namespace Game.PowerUps
                 return;
 
             _powerUps.Activate(_powerUp);
+            _audio.Play(_pickupSound);
             _pool.Despawn(this);
         }
 

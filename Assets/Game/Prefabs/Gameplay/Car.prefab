@@ -10078,8 +10078,10 @@ MonoBehaviour:
   _damageFlash: {fileID: 6275751168749601731}
   _impulseSource: {fileID: 1060626581655910890}
   _body: {fileID: 8800961880039921395}
+  _hitSound: {fileID: 11400000, guid: 72dab63ce197b254f84fc352fdc5a914, type: 2}
   _punchStrength: 0.06
   _punchDuration: 0.2
+  _explosionSound: {fileID: 11400000, guid: 649e68257a599664d888c1ce510660c6, type: 2}
   _wreck: {fileID: 6994551672893644647}
   _explosion: {fileID: 9028337177471610652}
   _smoke: {fileID: 3637369565196885622}
@@ -15776,6 +15778,7 @@ MonoBehaviour:
   _muzzle: {fileID: 4084448859748702129}
   _muzzleFlash: {fileID: 1636381389641161130}
   _recoilTarget: {fileID: 5956366999432903527}
+  _shotSound: {fileID: 11400000, guid: 621ca16e261c78846900a3614741c70c, type: 2}
 --- !u!114 &2268442707437709336
 MonoBehaviour:
   m_ObjectHideFlags: 0

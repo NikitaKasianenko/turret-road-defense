@@ -1106,6 +1106,8 @@ MonoBehaviour:
   _loseText: You lose
   _winColor: {r: 0.45, g: 0.9, b: 0.35, a: 1}
   _loseColor: {r: 0.95, g: 0.3, b: 0.25, a: 1}
+  _winSound: {fileID: 11400000, guid: 883951c3bb26d9c4184d8f51a9556f44, type: 2}
+  _loseSound: {fileID: 11400000, guid: 92b544eab1d8f2642a5b8179df793920, type: 2}
   _fadeDuration: 0.25
   _titlePopDuration: 0.4
 --- !u!1 &5664517079508490577

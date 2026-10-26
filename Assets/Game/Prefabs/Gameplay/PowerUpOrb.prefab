@@ -185,6 +185,7 @@ MonoBehaviour:
   _flightDuration: 0.7
   _arcHeight: 3
   _targetHeight: 1.5
+  _pickupSound: {fileID: 11400000, guid: 915e4c4e89b2acf4d8a89019964100ff, type: 2}
 --- !u!1 &3825459787576254492
 GameObject:
   m_ObjectHideFlags: 0
